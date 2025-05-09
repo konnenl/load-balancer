@@ -9,7 +9,10 @@ import (
 
 type JsonLoader struct{}
 
-//TODO add validation for url
+func NewJsonLoader() *JsonLoader{
+	return &JsonLoader{}
+}
+
 func (l *JsonLoader) Load(path string) (*Config, error) {
 	file, err := os.ReadFile(path)
 	if err != nil {
