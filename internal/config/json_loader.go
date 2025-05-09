@@ -1,0 +1,21 @@
+package config
+
+import (
+	"os"
+	"encoding/json"
+)
+
+type JsonLoader struct{}
+
+func (l *JsonLoader) Load(path string) (*Config, error) {
+	file, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var cfg Config
+    if err = json.Unmarshal(file, &cfg); err != nil{
+		return nil, err
+	}
+
+	return &cfg, nil
+}
