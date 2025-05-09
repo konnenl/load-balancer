@@ -12,7 +12,7 @@ func main() {
 	loader := config.NewLoader("json")
 	cfg, err := loader.Load("config.json")
 	if err != nil{
-		log.Fatal("Config error: %v", err)
+		log.Fatalf("Config error: %v", err)
 	}
 	var servers []*balancer.Server
 	for _, s := range cfg.Servers{

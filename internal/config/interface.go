@@ -1,5 +1,9 @@
 package config
 
+const(
+	urlPattern = `^(http)://([a-zA-Z0-9\-]+(\.[a-zA-Z0-9\-]+)*|(\d{1,3}\.){3}\d{1,3}):\d+$`
+)
+
 type Config struct {
 	Port   string `json:"port"`
 	Servers []struct{
