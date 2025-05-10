@@ -10,12 +10,12 @@ import (
 // Структура загрузчика конфига из json файла
 type JsonLoader struct{}
 
-// Функция, возвращающая новый JsonLoader
+// NewJsonLoader создаёт новый экземпляр JsonLoader
 func NewJsonLoader() *JsonLoader {
 	return &JsonLoader{}
 }
 
-// Функция, загружающая конфиг из json файла и возвращающая заполненную структуру Config
+// Load загружает конфиг из указанного json файла и возвращает заполненную структуру Config
 func (l *JsonLoader) Load(path string) (*Config, error) {
 	file, err := os.ReadFile(path)
 	if err != nil {
@@ -34,7 +34,7 @@ func (l *JsonLoader) Load(path string) (*Config, error) {
 	return &cfg, nil
 }
 
-// Функция для валидации url
+// IsValidUrl проводит валидацию url
 func (l *JsonLoader) IsValidUrl(url string) bool {
 	return regexp.MustCompile(urlPattern).MatchString(url)
 }

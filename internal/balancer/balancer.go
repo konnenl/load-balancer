@@ -17,7 +17,7 @@ type Balancer interface {
 	HandleRequest(w http.ResponseWriter, r *http.Request)
 }
 
-// Функция, возвращающая реализацию балансировщика в зависимости от выбранного алгоритма
+// New возвращает реализацию балансировщика в зависимости от выбранного алгоритма
 func New(algotithm string, servers []*Server, logger *logger.Logger) Balancer {
 	switch algotithm {
 	case "round-robin":

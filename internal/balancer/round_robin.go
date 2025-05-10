@@ -18,7 +18,7 @@ type RoundRobinBalancer struct {
 	logger  *logger.Logger
 }
 
-// Функция, возвращающая новый RoundRobinBalancer
+// NewRoundRobinBalancer создаёт новый экземпляр балнсировщика RoundRobinBalancer
 func NewRoundRobinBalancer(servers []*Server, logger *logger.Logger) *RoundRobinBalancer {
 	return &RoundRobinBalancer{
 		servers: servers,
@@ -27,7 +27,7 @@ func NewRoundRobinBalancer(servers []*Server, logger *logger.Logger) *RoundRobin
 	}
 }
 
-// Функция, обрабатывающая входящий запрос
+// HandleRequest обрабатывает входящий запрос
 func (b *RoundRobinBalancer) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	b.logger.RequestLog.Printf("Incoming request: %s %s", r.Method, r.URL.Path)
 	// Получаение следующего по очереди сервера
@@ -49,7 +49,7 @@ func (b *RoundRobinBalancer) HandleRequest(w http.ResponseWriter, r *http.Reques
 	b.proxy.ServeHTTP(w, r)
 }
 
-// Функция, возвращающая следующий доступный сервер или nil, если таких нет
+// GetNext возвращает следующий доступный сервер или nil, если таких нет
 func (b *RoundRobinBalancer) GetNext() *Server {
 	b.mux.Lock()
 	defer b.mux.Unlock()
@@ -71,7 +71,7 @@ func (b *RoundRobinBalancer) GetNext() *Server {
 	return nil
 }
 
-// Функция, проверяющая доступность сервера
+// IsAlive проверяет доступность сервера
 func (b *RoundRobinBalancer) IsAlive(url string) bool {
 	client := http.Client{Timeout: 1 * time.Second}
 	_, err := client.Head(url)

@@ -19,7 +19,7 @@ type ConfigLoader interface {
 	Load(path string) (*Config, error)
 }
 
-// Функция, возвращающая загрузчик для указанного формата
+// NewLoader возвращающет реализацию загрузчика в зависимости от указанного формата
 func NewLoader(format string) ConfigLoader {
 	switch format {
 	case "json":

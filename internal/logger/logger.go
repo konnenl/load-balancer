@@ -16,8 +16,7 @@ type Logger struct {
 	RequestLog *log.Logger
 }
 
-// Функция, создающая новый Logger
-// (вывод в терминал)
+// New  создаёт новый экземпляр Logger
 func New() *Logger {
 	return &Logger{
 		InfoLog:    log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime),
