@@ -1,15 +1,15 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
-	"encoding/json"
 	"regexp"
 )
 
 type JsonLoader struct{}
 
-func NewJsonLoader() *JsonLoader{
+func NewJsonLoader() *JsonLoader {
 	return &JsonLoader{}
 }
 
@@ -19,11 +19,11 @@ func (l *JsonLoader) Load(path string) (*Config, error) {
 		return nil, err
 	}
 	var cfg Config
-    if err = json.Unmarshal(file, &cfg); err != nil{
+	if err = json.Unmarshal(file, &cfg); err != nil {
 		return nil, err
 	}
-	for i, s := range cfg.Servers{
-		if !l.ValidUrl(s.Url){
+	for i, s := range cfg.Servers {
+		if !l.ValidUrl(s.Url) {
 			return nil, fmt.Errorf("invalid url index: %d", i)
 		}
 	}
@@ -31,6 +31,6 @@ func (l *JsonLoader) Load(path string) (*Config, error) {
 	return &cfg, nil
 }
 
-func (l *JsonLoader) ValidUrl(url string) bool{
+func (l *JsonLoader) ValidUrl(url string) bool {
 	return regexp.MustCompile(urlPattern).MatchString(url)
 }
