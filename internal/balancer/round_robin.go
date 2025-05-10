@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// Структура балансировщика методом round-robin
 type RoundRobinBalancer struct {
 	servers []*Server
 	current uint
@@ -17,6 +18,7 @@ type RoundRobinBalancer struct {
 	logger  *logger.Logger
 }
 
+// Функция, возвращающая новый RoundRobinBalancer
 func NewRoundRobinBalancer(servers []*Server, logger *logger.Logger) *RoundRobinBalancer {
 	return &RoundRobinBalancer{
 		servers: servers,
@@ -25,14 +27,18 @@ func NewRoundRobinBalancer(servers []*Server, logger *logger.Logger) *RoundRobin
 	}
 }
 
+// Функция, обрабатывающая входящий запрос
 func (b *RoundRobinBalancer) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	b.logger.RequestLog.Printf("Incoming request: %s %s", r.Method, r.URL.Path)
+	// Получаение следующего по очереди сервера
 	nextServer := b.GetNext()
+	// Обработка ошибки, когда нет доступных серверов
 	if nextServer == nil {
 		b.logger.InfoLog.Println("No available servers")
 		http.Error(w, "Server unavailable", http.StatusServiceUnavailable)
 		return
 	}
+	// Перенаправление запроса на нужный сервер
 	url, _ := url.Parse(nextServer.Url)
 	b.proxy.Director = func(r *http.Request) {
 		r.URL.Scheme = url.Scheme
@@ -43,6 +49,7 @@ func (b *RoundRobinBalancer) HandleRequest(w http.ResponseWriter, r *http.Reques
 	b.proxy.ServeHTTP(w, r)
 }
 
+// Функция, возвращающая следующий доступный сервер или nil, если таких нет
 func (b *RoundRobinBalancer) GetNext() *Server {
 	b.mux.Lock()
 	defer b.mux.Unlock()
@@ -64,6 +71,7 @@ func (b *RoundRobinBalancer) GetNext() *Server {
 	return nil
 }
 
+// Функция, проверяющая доступность сервера
 func (b *RoundRobinBalancer) IsAlive(url string) bool {
 	client := http.Client{Timeout: 1 * time.Second}
 	_, err := client.Head(url)

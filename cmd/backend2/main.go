@@ -5,8 +5,8 @@ import (
 	"net/http"
 )
 
+// Сервер для тестирования работы балансировщика
 func main() {
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Response from server on port 4000")
 	})
