@@ -3,6 +3,7 @@ package balancer
 import (
 	"net/http"
 	"sync"
+	"github.com/konnenl/load-balancer/internal/logger"
 )
 
 type Server struct {
@@ -15,12 +16,12 @@ type Balancer interface {
 	HandleRequest(w http.ResponseWriter, r *http.Request)
 }
 
-func New(algotithm string, servers []*Server) Balancer {
+func New(algotithm string, servers []*Server, logger *logger.Logger) Balancer {
 	switch algotithm {
 	case "round-robin":
-		return NewRoundRobinBalancer(servers)
+		return NewRoundRobinBalancer(servers, logger)
 	default:
-		return NewRoundRobinBalancer(servers)
+		return NewRoundRobinBalancer(servers, logger)
 	}
 
 }

@@ -1,18 +1,19 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 	"github.com/konnenl/load-balancer/internal/balancer"
 	"github.com/konnenl/load-balancer/internal/config"
+	"github.com/konnenl/load-balancer/internal/logger"
 )
 
 func main() {
+	logger := logger.New()
+
 	loader := config.NewLoader("json")
 	cfg, err := loader.Load("config.json")
 	if err != nil {
-		log.Fatalf("Config error: %v", err)
+		logger.ErrorLog.Fatal("Failed to load config:", err)
 	}
 	var servers []*balancer.Server
 	for _, s := range cfg.Servers {
@@ -21,12 +22,12 @@ func main() {
 		})
 	}
 
-	balancer := balancer.New(cfg.Algorithm, servers)
+	balancer := balancer.New(cfg.Algorithm, servers, logger)
 
 	http.HandleFunc("/", balancer.HandleRequest)
 	port := ":" + cfg.Port
-	fmt.Println("Starting server on port", port)
+	logger.InfoLog.Printf("Starting server on port", port)
 	if err := http.ListenAndServe(port, nil); err != nil {
-		panic(err)
+		logger.ErrorLog.Fatal(err)
 	}
 }

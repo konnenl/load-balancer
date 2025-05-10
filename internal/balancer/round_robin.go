@@ -2,11 +2,11 @@ package balancer
 
 import(
 	"net/url"
-	"fmt"
 	"sync"
 	"net/http"
 	"net/http/httputil"
 	"time"
+	"github.com/konnenl/load-balancer/internal/logger"
 )
 
 type RoundRobinBalancer struct{
@@ -14,19 +14,23 @@ type RoundRobinBalancer struct{
 	current uint
 	proxy *httputil.ReverseProxy
 	mux sync.Mutex
+	logger *logger.Logger
 }
 
-func NewRoundRobinBalancer(servers []*Server) *RoundRobinBalancer{
+func NewRoundRobinBalancer(servers []*Server, logger *logger.Logger) *RoundRobinBalancer{
 	return &RoundRobinBalancer{
 		servers: servers,
 		proxy: &httputil.ReverseProxy{},
+		logger: logger,
 	}
 }
 
 func(b *RoundRobinBalancer) HandleRequest(w http.ResponseWriter, r *http.Request){
+	b.logger.RequestLog.Printf("Incoming request: %s %s", r.Method, r.URL.Path)
 	nextServer := b.GetNext()
 	if nextServer == nil{
-		http.Error(w, "No available servers", 509)
+		b.logger.InfoLog.Println("No available servers")
+		http.Error(w, "Server unavailable", http.StatusServiceUnavailable)
 		return 
 	}
 	url, _ := url.Parse(nextServer.Url)
@@ -34,6 +38,9 @@ func(b *RoundRobinBalancer) HandleRequest(w http.ResponseWriter, r *http.Request
 		r.URL.Scheme = url.Scheme
 		r.URL.Host = url.Host
 	}
+	
+
+	b.logger.InfoLog.Printf("Request redirected to %s", nextServer.Url)
 	b.proxy.ServeHTTP(w, r)
 }
 
@@ -51,12 +58,10 @@ func (b *RoundRobinBalancer) GetNext() *Server{
 		server.mux.RUnlock()
 		
 		if alive{
-			fmt.Println("Selected", alive, server.Url)
 			return server
 		}
-		fmt.Println("Skipped", alive, server.Url)
+		b.logger.InfoLog.Printf("Server  unavailable: %s", server.Url)
 	}
-
 	return nil
 }
 
