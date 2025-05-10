@@ -23,7 +23,7 @@ func (l *JsonLoader) Load(path string) (*Config, error) {
 		return nil, err
 	}
 	for i, s := range cfg.Servers {
-		if !l.ValidUrl(s.Url) {
+		if !l.IsValidUrl(s.Url) {
 			return nil, fmt.Errorf("invalid url index: %d", i)
 		}
 	}
@@ -31,6 +31,6 @@ func (l *JsonLoader) Load(path string) (*Config, error) {
 	return &cfg, nil
 }
 
-func (l *JsonLoader) ValidUrl(url string) bool {
+func (l *JsonLoader) IsValidUrl(url string) bool {
 	return regexp.MustCompile(urlPattern).MatchString(url)
 }
