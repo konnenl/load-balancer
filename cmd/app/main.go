@@ -13,7 +13,7 @@ func main() {
 
 	// Инициализация загрузчика конфига в json формате
 	loader := config.NewLoader("json")
-	// Загружаем конфиг
+	// Загрузка конфига
 	cfg, err := loader.Load("config.json")
 	if err != nil {
 		logger.ErrorLog.Fatal("Failed to load config:", err)
