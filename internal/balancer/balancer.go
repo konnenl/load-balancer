@@ -1,9 +1,9 @@
 package balancer
 
 import (
+	"github.com/konnenl/load-balancer/internal/logger"
 	"net/http"
 	"sync"
-	"github.com/konnenl/load-balancer/internal/logger"
 )
 
 type Server struct {

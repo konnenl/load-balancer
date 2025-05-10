@@ -1,10 +1,10 @@
 package main
 
 import (
-	"net/http"
 	"github.com/konnenl/load-balancer/internal/balancer"
 	"github.com/konnenl/load-balancer/internal/config"
 	"github.com/konnenl/load-balancer/internal/logger"
+	"net/http"
 )
 
 func main() {
